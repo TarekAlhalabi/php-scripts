@@ -1,11 +1,11 @@
 <?php
 
-//DB Connect Class
+//DBController Script
 //Create by: Tarek Alhalabi
-//Version: 1.0.0
+
 /*
-    Ready to use and implement php class to establish secure connection
-    with the mysql database
+** Connect to database class
+** init secure database connection with PHP PDO
 */
 
 class DBConnection{
@@ -21,6 +21,10 @@ class DBConnection{
     //database user password
     private $password = "";
     private $conn;
+
+    /*
+    ** Connect to the database method
+    */
 
     public function connect(){
         try{
@@ -38,6 +42,51 @@ class DBConnection{
         }catch(PDOException $e){
             //report the error message
             die("Failed to connect to database: " . $e->getMessage());
+        }
+    }
+
+}
+
+
+
+/*
+** Datebase query class
+** Create & execute & retrive data from database query
+*/
+
+class Query{
+
+    //database connection string
+    private $conn;
+    
+    function __construct(){
+        //init the database connection
+        $conn = new DBConnection();
+        $this->conn = $conn->connect();
+    }
+
+    /*
+    ** prepare and execute query method
+    */
+    public function execute($query, $args){
+        //preapre the query
+        $stmt = $this->conn->prepare($query);
+
+        //check if the statment executed successfully
+        if($stmt->execute($args)){
+
+            $result = array();
+            //return the row count
+            $result["rows"] = $stmt->rowCount();
+            //return the query data
+            $result["data"] = $stmt->fetchAll();
+
+            return $result;
+
+        }else{
+            //print an error message
+            echo "an error happend while executing the query!";
+            return;
         }
     }
 
