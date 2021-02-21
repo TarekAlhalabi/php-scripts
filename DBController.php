@@ -21,6 +21,8 @@ class DBConnection{
     //database user password
     private $password = "";
     private $conn;
+    //connection status
+    private $is_connected = FALSE;
 
     /*
     ** Connect to the database method
@@ -29,13 +31,15 @@ class DBConnection{
     public function connect(){
         try{
             //try to connect
-            $conn = new PDO($this->db_type.":host=".$this->host.";dbname=".$this->dbname, $this->username, $this->password);
+            $conn = new PDO($this->dbtype.":host=".$this->host.";dbname=".$this->dbname, $this->username, $this->password);
             //set the error reporting type to exceptions
             $conn -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             //set the default data fetch mode to associative array
             $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
             $this->conn = $conn;
+            //update the connection status to TRUE
+            $this->is_connected = TRUE;
             //return the connection variable
             return $this->conn;
 
@@ -43,6 +47,14 @@ class DBConnection{
             //report the error message
             die("Failed to connect to database: " . $e->getMessage());
         }
+    }
+
+    /*
+    ** Check connection status method
+    */
+
+    public function is_connected(){
+        return $this->is_connected;
     }
 
 }
