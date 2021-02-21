@@ -24,10 +24,13 @@ class DBConnection{
     //connection status
     private $is_connected = FALSE;
 
+    public function __construct(){
+        $this->connect();
+    }
+
     /*
     ** Connect to the database method
     */
-
     public function connect(){
         try{
             //try to connect
@@ -40,8 +43,8 @@ class DBConnection{
             $this->conn = $conn;
             //update the connection status to TRUE
             $this->is_connected = TRUE;
-            //return the connection variable
-            return $this->conn;
+            //return TRUE
+            return TRUE;
 
         }catch(PDOException $e){
             //report the error message
@@ -52,35 +55,26 @@ class DBConnection{
     /*
     ** Check connection status method
     */
-
     public function is_connected(){
         return $this->is_connected;
     }
 
-}
-
-
-
-/*
-** Datebase query class
-** Create & execute & retrive data from database query
-*/
-
-class Query{
-
-    //database connection string
-    private $conn;
-    
-    function __construct(){
-        //init the database connection
-        $conn = new DBConnection();
-        $this->conn = $conn->connect();
+    /*
+    ** Get the connection PDO object method
+    */
+    public function get_connection(){
+        if($this->is_connected()) return $this->conn;
+        else return FALSE;
     }
 
     /*
-    ** prepare and execute query method
+    ** Execute query method
     */
     public function execute($query, $args){
+        //check if a connection is established
+        if(!$this->is_connected())
+            echo "Can't execute the query, no connection is established yet";
+
         //preapre the query
         $stmt = $this->conn->prepare($query);
 
@@ -103,5 +97,3 @@ class Query{
     }
 
 }
-
-?>
